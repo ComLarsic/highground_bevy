@@ -1,0 +1,22 @@
+[package]
+name = "p_super"
+version = "0.1.0"
+edition = "2021"
+
+[profile.dev]
+opt-level = 2
+
+[dependencies]
+bevy = "0.6"
+
+[dev-dependencies]
+bevy = { version = "0.6", features = ["dynamic"] }
+
+[lib]
+name = "libhighground"
+path = "src/lib.rs"
+crate-type = ["rlib", "dylib"]
+
+[[bin]]
+name = "highground"
+path = "src/main.rs"
