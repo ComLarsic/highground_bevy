@@ -20,7 +20,7 @@ fn setup(mut commands: Commands) {
             collider: Collider {
                 half_extents: Vec2::new(32f32, 32f32),
             },
-            gravity_scale: GravityScale(2f32),
+            gravity_scale: GravityScale(6f32),
             ..Default::default()
         })
         .insert(Transform {
@@ -48,6 +48,29 @@ fn setup(mut commands: Commands) {
         })
         .insert(Transform {
             translation: Vec3::new(-64f32, -256.0f32, 0.0f32),
+            ..Default::default()
+        });
+
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                color: Color::GREEN,
+                custom_size: Some(Vec2::new(64f32, 64f32)),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert_bundle(PhysicsBodyBundle {
+            body: PhysicsBody::Static,
+            velocity: Vec2::new(0f32, 0f32).into(),
+            friction: Vec2::new(0f32, 0f32).into(),
+            collider: Collider {
+                half_extents: Vec2::new(32f32, 32f32),
+            },
+            ..Default::default()
+        })
+        .insert(Transform {
+            translation: Vec3::new(32f32, -256.0f32 + 32f32, 0.0f32),
             ..Default::default()
         });
 }

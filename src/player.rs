@@ -1,4 +1,4 @@
-use crate::prelude::{Collider, Friction, GravityScale, PhysicsBody, Velocity};
+use crate::prelude::{Collider, Friction, GravityScale, PhysicsBody, Velocity, PhysicsConfig};
 use bevy::prelude::*;
 
 /** A bundle holding the components for the player */
@@ -156,11 +156,12 @@ fn update_input_state(
 /** Handle the players state */
 fn handle_state(
     time: Res<Time>,
-    mut players: Query<(&mut Velocity, &PlayerState, &PlayerInputState)>,
+    physics_conf: Res<PhysicsConfig>,
+    mut players: Query<(&mut Velocity, &GravityScale, &PlayerState, &PlayerInputState)>,
 ) {
-    for (mut velocity, state, input) in players.iter_mut() {
-        if velocity.0.y == 0.0 && input.is_jumping {
-            velocity.0.y -= 150f32;
+    for (mut velocity, gravity_scale, state, input) in players.iter_mut() {
+        if velocity.0.y - physics_conf.gravity.y * gravity_scale.0 * time.delta_seconds() == 0.0 && input.is_jumping {
+            velocity.0.y += 450f32;
         }
 
         velocity.0.x = input.xmove * if input.is_sprinting {350f32} else {250f32};
