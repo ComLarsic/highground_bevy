@@ -8,6 +8,7 @@ opt-level = 2
 
 [dependencies]
 bevy = "0.6"
+libloading = "0.7.3"
 
 [dev-dependencies]
 bevy = { version = "0.6", features = ["dynamic"] }

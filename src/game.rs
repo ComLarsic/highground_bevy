@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use bevy::prelude::*;
 
-/** The state of the game */
+/// The state of the game
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GameState {
     Startup,
@@ -58,7 +58,7 @@ fn setup(
         })
         .insert_bundle(PlayerBundle {
             velocity: Vec2::new(0f32, 0f32).into(),
-            friction: Vec2::new(12.8f32, 0f32).into(),
+            friction: Vec2::new(16.8f32, 0f32).into(),
             collider: Collider {
                 half_extents: Vec2::new(12f32, 12f32),
             },

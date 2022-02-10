@@ -1,3 +1,4 @@
+use std::ops::{DerefMut, Deref};
 use bevy::prelude::*;
 
 use crate::prelude::GameState;
@@ -30,6 +31,34 @@ impl From<Vec2> for Velocity {
 impl From<Vec2> for Friction {
     fn from(v: Vec2) -> Self {
         Self(v)
+    }
+}
+
+impl Deref for Velocity {
+    type Target = Vec2;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for Velocity {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl Deref for Friction {
+    type Target = Vec2;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for Friction {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 
@@ -121,8 +150,8 @@ fn handle_collisions(
     ) = iter.fetch_next()
     {
         // Calulate the next positions for body a
-        let next_x = transform_a.translation.x + velocity_a.0.x * time.delta_seconds();
-        let next_y = transform_a.translation.y + velocity_a.0.y * time.delta_seconds();
+        let next_x = transform_a.translation.x + velocity_a.x * time.delta_seconds();
+        let next_y = transform_a.translation.y + velocity_a.y * time.delta_seconds();
 
         // Check the collisions between the different axises
         if !((next_x - transform_b.translation.x).abs()
@@ -130,19 +159,19 @@ fn handle_collisions(
             && !((transform_a.translation.y - transform_b.translation.y).abs()
                 > collider_a.half_extents.y + collider_b.half_extents.y)
         {
-            velocity_a.0.x = 0.0;
+            velocity_a.x = 0.0;
         }
         if !((transform_a.translation.x - transform_b.translation.x).abs()
             > collider_a.half_extents.x + collider_b.half_extents.x)
             && !((next_y - transform_b.translation.y).abs()
                 > collider_a.half_extents.y + collider_b.half_extents.y)
         {
-            velocity_a.0.y = 0.0;
+            velocity_a.y = 0.0;
         }
 
         // Calulate the next positions for body b
-        let next_x = transform_b.translation.x + velocity_b.0.x * time.delta_seconds();
-        let next_y = transform_b.translation.y + velocity_b.0.y * time.delta_seconds();
+        let next_x = transform_b.translation.x + velocity_b.x * time.delta_seconds();
+        let next_y = transform_b.translation.y + velocity_b.y * time.delta_seconds();
 
         // Check the collisions between the different axises
         if !((next_x - transform_a.translation.x).abs()
@@ -150,14 +179,14 @@ fn handle_collisions(
             && !((transform_b.translation.y - transform_a.translation.y).abs()
                 > collider_b.half_extents.y + collider_a.half_extents.y)
         {
-            velocity_b.0.x = 0.0;
+            velocity_b.x = 0.0;
         }
         if !((transform_b.translation.x - transform_a.translation.x).abs()
             > collider_b.half_extents.x + collider_a.half_extents.x)
             && !((next_y - transform_a.translation.y).abs()
                 > collider_b.half_extents.y + collider_a.half_extents.y)
         {
-            velocity_b.0.y = 0.0;
+            velocity_b.y = 0.0;
         }
     }
 }
@@ -179,8 +208,8 @@ fn apply_gravity(
 fn apply_velocity(time: Res<Time>, mut bodies: Query<(&mut Transform, &PhysicsBody, &Velocity)>) {
     for (mut transform, body, velocity) in bodies.iter_mut() {
         if *body == PhysicsBody::Dynamic {
-            transform.translation.x += velocity.0.x * time.delta_seconds();
-            transform.translation.y += velocity.0.y * time.delta_seconds();
+            transform.translation.x += velocity.x * time.delta_seconds();
+            transform.translation.y += velocity.y * time.delta_seconds();
         }
     }
 }
@@ -189,8 +218,8 @@ fn apply_velocity(time: Res<Time>, mut bodies: Query<(&mut Transform, &PhysicsBo
 fn apply_friction(time: Res<Time>, mut bodies: Query<(&mut Velocity, &PhysicsBody, &Friction)>) {
     for (mut velocity, body, friction) in bodies.iter_mut() {
         if *body == PhysicsBody::Dynamic {
-            velocity.0.x += (friction.0.x * time.delta_seconds()) * (0f32 - velocity.0.x);
-            velocity.0.y += (friction.0.y * time.delta_seconds()) * (0f32 - velocity.0.y);
+            velocity.x += (friction.x * time.delta_seconds()) * (0f32 - velocity.x);
+            velocity.y += (friction.y * time.delta_seconds()) * (0f32 - velocity.y);
         }
     }
 }

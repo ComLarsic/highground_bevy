@@ -2292,6 +2292,7 @@ name = "p_super"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "libloading",
 ]
 
 [[package]]

@@ -2,8 +2,9 @@ use crate::prelude::{Collider, Friction, GameState, GravityScale, PhysicsBody, V
 use bevy::prelude::*;
 
 // The player constants
-const PLAYER_WALK_ACCEL: f32 = 10.0;
-const PLAYER_RUN_ACCEL: f32 = 15.0;
+const PLAYER_WALK_ACCEL: f32 = 12.0;
+const PLAYER_RUN_ACCEL: f32 = 17.0;
+const PLAYER_JUMP_FORCE: f32 = 135.0;
 
 /// A bundle holding the components for the player
 #[derive(Debug, Clone, Bundle)]
@@ -185,8 +186,16 @@ fn handle_state(
 ) {
     for (mut velocity, state, input) in players.iter_mut() {
         match state {
-            PlayerState::Idle => {}
+            PlayerState::Idle => {
+                if input.is_jumping && velocity.0.y == 0.0 {
+                    velocity.0.y += PLAYER_JUMP_FORCE;
+                }
+            }
             PlayerState::Walking => {
+                if input.is_jumping && velocity.0.y == 0.0 {
+                    velocity.0.y += PLAYER_JUMP_FORCE;
+                }
+
                 velocity.0.x += input.xmove
                     * if input.is_sprinting {
                         PLAYER_RUN_ACCEL

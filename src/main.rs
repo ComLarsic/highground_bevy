@@ -1,11 +1,21 @@
 //! A story-driven 2d platformer with rpg-elements, inspired by super paper mario
-use bevy::prelude::*;
-use libhighground::prelude::*;
+use std::error::Error;
+use libloading::{Library, Symbol};
 
-/// The entrypoint is the most basic possible.
-/// All the setup is done in the [`GamePlugin`]
-fn main() {
-    let mut app = App::new();
-    app.add_plugin(GamePlugin);
-    app.run();
+/// Loads the dynamic library 'libhighground' and calls the entrypoint
+/// This is done to simplify potential modding support
+fn main() -> Result<(), Box<dyn Error>> {
+    // Figure out what the lib name should be
+    #[cfg(target_os = "windows")]
+    let path = "libhighground.dll";
+    #[cfg(target_os = "macos")]
+    let path = "libhighground.dylib";
+    #[cfg(any(target_os = "linux", target_os = "freebsd"))]
+    let path = "liblibhighground.so";
+    // Load libhighground
+    let lib = unsafe { Library::new(path)? };
+    let entrypoint: Symbol<extern fn()> = unsafe { lib.get(b"start")? };
+    // Call the entrypoint
+    entrypoint();
+    return Ok(());
 }
